@@ -32,11 +32,37 @@ void add(Node **root, int field) // Here, as I'm using a void function, we need 
     // If the field is the same, nothing happens
 }
 
+bool find(Node* root, int key)
+{
+    bool found = false;
+
+    if (root == NULL) return found;
+
+    if (root->left != NULL && key < root->field) found = find(root->left, key);
+    if (root->right != NULL && key > root->field) found = find(root->right, key);
+    else if (key == root->field) found = true;
+
+    return found;
+}
+
+int count(Node* root)
+{
+    if (root != NULL) return (
+        1 + 
+        count(root->left) + 
+        count(root->right)
+    );
+    
+    return 0;
+}
+
 void print_tree(Node* root)
 {
+    // Order of print: left subtree / root / right subtree
+
     if (root->left != NULL) print_tree(root->left);
-    if (root->right != NULL) print_tree(root->right);
     printf("%i ", root->field);
+    if (root->right != NULL) print_tree(root->right);
 }
 
 int main()
@@ -48,6 +74,15 @@ int main()
     add(&root, 16);
 
     print_tree(root);
+
+    printf("\n%i", find(root, 16));
+    printf("\n%i", find(root, 17));
+
+    printf("There is %i\n", count(root));
+
+    add(&root, 20);
+
+    printf("There is %i\n", count(root));
 
     return 0;
 }
