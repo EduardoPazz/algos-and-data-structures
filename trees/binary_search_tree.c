@@ -32,7 +32,77 @@ void add(Node **root, int field) // Here, as I'm using a void function, we need 
     // If the field is the same, nothing happens
 }
 
-bool find(Node* root, int key)
+Node* findAux(Node *root, int key, Node **above)
+{
+    Node *actual = root;
+    *above = NULL;
+
+    while (actual != NULL)
+    {
+        if (actual->field == key) return actual;
+
+        *above = actual;
+        if (key < actual->field) actual = actual->left;
+        else actual = actual->right;
+    }
+
+    return NULL; // Node not found
+}
+
+Node* greater_left(Node *actual, Node **above)
+{
+    *above = actual;
+    actual = actual->left;
+    while (actual->right) {
+        *above = actual;
+        actual = actual->right;
+    }
+    return(actual);    
+}
+
+int removeNode(Node **root, int key)
+{
+    Node *above_to_be_removed = NULL, 
+    *to_be_removed = NULL, 
+    *above_substitute = NULL, 
+    *substitute = NULL;
+
+    to_be_removed = findAux(*root, key, &above_to_be_removed);
+
+    if (to_be_removed == NULL) return false;
+
+    // It begins the pointers nightmare...
+
+
+    if (!((to_be_removed->left != NULL) && (to_be_removed->right != NULL))) // When the to_be_removed node has one or none subnode
+    {
+        if (to_be_removed->left != NULL) substitute = to_be_removed->left;
+        else substitute = to_be_removed->right; // It may be NULL too
+        
+        if (above_to_be_removed == NULL) *root = substitute; // When the to_be_removed is the root
+        else
+        { // It makes the node above the to_be_removed points to the subtitute node
+            if (above_to_be_removed->left == to_be_removed) above_to_be_removed->left = substitute;
+            else above_to_be_removed->right = substitute;
+        }
+        free(to_be_removed);
+    } 
+
+    else // When the to_be_removed node has one or none subnode
+    { 
+        substitute = greater_left(to_be_removed, &above_substitute);
+        to_be_removed->field = substitute->field;
+        if (above_substitute->left == substitute) above_substitute->left = substitute->left;
+        else above_substitute->right = substitute->left;
+        free(substitute);
+
+        // Here, the substitute takes the place of to_be_removed and its previous addres is freed.
+    }
+    
+    return true;
+}
+
+bool find(Node *root, int key)
 {
     bool found = false;
 
@@ -70,19 +140,24 @@ int main()
     Node* root = initialize();
 
     add(&root, 15);
+    add(&root, 10);
+    add(&root, 5);
+    add(&root, 20);
     add(&root, 14);
-    add(&root, 16);
+    add(&root, 25);
+    add(&root, 19);
+    add(&root, 17);
+    add(&root, 18);
+
+    /* printf("There is %i\n", count(root)); */
 
     print_tree(root);
 
-    printf("\n%i", find(root, 16));
-    printf("\n%i", find(root, 17));
+    printf("\n");
 
-    printf("There is %i\n", count(root));
+    removeNode(&root, 20);
 
-    add(&root, 20);
-
-    printf("There is %i\n", count(root));
+    print_tree(root);
 
     return 0;
 }
