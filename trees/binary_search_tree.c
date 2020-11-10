@@ -126,13 +126,37 @@ int count(Node* root)
     return 0;
 }
 
-void print_tree(Node* root)
+void print_tree_pre_order(Node* root)
 {
-    // Order of print: left subtree / root / right subtree
+    // Order of print: root - left subtree - right subtree
 
-    if (root->left != NULL) print_tree(root->left);
+    if (root == NULL) return;
+
     printf("%i ", root->field);
-    if (root->right != NULL) print_tree(root->right);
+    print_tree_pre_order(root->left);
+    print_tree_pre_order(root->right);
+}
+
+void print_tree_in_order(Node* root)
+{
+    // Order of print: left subtree - root - right subtree
+
+    if (root == NULL) return;
+
+    print_tree_in_order(root->left);
+    printf("%i ", root->field);
+    print_tree_in_order(root->right);
+}
+
+void print_tree_post_order(Node* root)
+{
+    // Order of print: left subtree - right subtree - root
+
+    if (root == NULL) return;
+
+    print_tree_post_order(root->left);
+    print_tree_post_order(root->right);
+    printf("%i ", root->field);
 }
 
 int main()
@@ -149,15 +173,13 @@ int main()
     add(&root, 17);
     add(&root, 18);
 
-    /* printf("There is %i\n", count(root)); */
-
-    print_tree(root);
-
+    print_tree_pre_order(root);
     printf("\n");
+    print_tree_in_order(root);
+    printf("\n");
+    print_tree_post_order(root);
 
-    removeNode(&root, 20);
-
-    print_tree(root);
+    
 
     return 0;
 }
