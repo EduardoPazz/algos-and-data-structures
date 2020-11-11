@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef int bool;
-#define true 1
-#define false 0
-
-typedef enum { left, right } Side;
-
-typedef struct aux 
-{
-    int field;
-    struct aux *left, *right;
-} Node;
+#include "common_headers.h"
+#include "binary_search_tree.h"
+#include "aux_stack.c"
 
 Node* initialize() { return NULL; }
 
@@ -159,6 +148,24 @@ void print_tree_post_order(Node* root)
     printf("%i ", root->field);
 }
 
+void print_tree_pre_order_non_recursive(Node *root)
+{
+    if (root == NULL) return;
+
+    Stack *node_stack = initialize_stack();
+
+    push(node_stack, root);
+
+    for (Node *actual_node; !isEmpty(node_stack); printf("%i ", actual_node->field))
+    {
+        actual_node = pop(node_stack);
+
+        if (actual_node->right != NULL) push(node_stack, actual_node->right); // We are pushing the right subtree first for the left subtree to be the first to be called in the next iteration
+        if (actual_node->left != NULL) push(node_stack, actual_node->left);
+    }
+    
+}
+
 int main()
 {
     Node* root = initialize();
@@ -175,11 +182,7 @@ int main()
 
     print_tree_pre_order(root);
     printf("\n");
-    print_tree_in_order(root);
-    printf("\n");
-    print_tree_post_order(root);
-
-    
+    print_tree_pre_order_non_recursive(root);
 
     return 0;
 }
