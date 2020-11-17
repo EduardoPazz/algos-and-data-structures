@@ -37,7 +37,7 @@ Node* pop(Stack* stack) {
     return address;
 }
 
-bool isEmpty(Stack *stack) {
+bool stack_is_empty(Stack *stack) {
     return stack->height == 0;
 }
 

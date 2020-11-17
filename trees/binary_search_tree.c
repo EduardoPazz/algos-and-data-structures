@@ -1,24 +1,32 @@
-#include "common_headers.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int bool;
+#define true 1
+#define false 0
+
 #include "binary_search_tree.h"
 #include "aux_stack.c"
+#include "aux_queue.c"
 
 Node* initialize() { return NULL; }
 
 void add(Node **root, int field) // Here, as I'm using a void function, we need to use the pointer of the pointer of the root node, so it may be confuse the uses of *'s and ()'s.
 {
-    if (*root == NULL) // Initialize the nodes
+    if (*root == NULL) // Initialize the node
     { 
         *root = (Node*) malloc(sizeof(Node));
         (*root)->field = field;
         (*root)->left = NULL;
         (*root)->right = NULL;
-
-        return;
     }
+    else
+    {
+        if (field < (*root)->field) add(&((*root)->left), field);
+        else if (field > (*root)->field) add(&((*root)->right), field);
 
-    if (field < (*root)->field) add(&((*root)->left), field);
-    else if (field > (*root)->field) add(&((*root)->right), field);
-    // If the field is the same, nothing happens
+        // If the field is the same, nothing happens
+    }
 }
 
 Node* findAux(Node *root, int key, Node **above)
@@ -77,7 +85,7 @@ int removeNode(Node **root, int key)
         free(to_be_removed);
     } 
 
-    else // When the to_be_removed node has one or none subnode
+    else // When the to_be_removed node has two subnodes
     { 
         substitute = greater_left(to_be_removed, &above_substitute);
         to_be_removed->field = substitute->field;
@@ -156,7 +164,7 @@ void print_tree_pre_order_non_recursive(Node *root)
 
     push(node_stack, root);
 
-    for (Node *actual_node; !isEmpty(node_stack); printf("%i ", actual_node->field))
+    for (Node *actual_node; !stack_is_empty(node_stack); printf("%i ", actual_node->field))
     {
         actual_node = pop(node_stack);
 
@@ -166,23 +174,36 @@ void print_tree_pre_order_non_recursive(Node *root)
     
 }
 
+void print_tree_per_level_non_recursive(Node *root)
+{
+    if (root == NULL) return;
+
+    Queue *node_queue = initialize_queue();
+
+    in(node_queue, root);
+
+    for (Node *actual_node; !queue_is_empty(node_queue); printf("%i ", actual_node->field))
+    {
+        actual_node = out(node_queue);
+
+        if (actual_node->left != NULL) in(node_queue, actual_node->left);
+        if (actual_node->right != NULL) in(node_queue, actual_node->right);
+    }
+}
+
 int main()
 {
     Node* root = initialize();
 
-    add(&root, 15);
-    add(&root, 10);
-    add(&root, 5);
-    add(&root, 20);
-    add(&root, 14);
-    add(&root, 25);
-    add(&root, 19);
-    add(&root, 17);
-    add(&root, 18);
+    add(&root, 40);
+    add(&root, 30);
+    add(&root, 35);
+    add(&root, 70);
+    add(&root, 45);
+    add(&root, 85);
 
-    print_tree_pre_order(root);
+    print_tree_per_level_non_recursive(root);
     printf("\n");
-    print_tree_pre_order_non_recursive(root);
 
     return 0;
 }
