@@ -1,3 +1,5 @@
+#include "common-header.h"
+
 typedef struct aux_node 
 {
     int field;

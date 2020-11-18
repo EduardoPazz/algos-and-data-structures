@@ -1,10 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef int bool;
-#define true 1
-#define false 0
-
 #include "binary_search_tree.h"
 #include "aux_stack.c"
 #include "aux_queue.c"
