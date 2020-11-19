@@ -1,4 +1,4 @@
-#include "common-header.h"
+#include "../common-header.h"
 
 typedef struct aux_node 
 {
